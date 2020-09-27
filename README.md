@@ -10,6 +10,11 @@ This repo is a learning environment focused on sentiment analysis of recycling m
     - Use textblob to classify tweets by sentiment
         - Assess words for trash-related content, and remove it.
 
+### NOTES:
+- 'en-sentiments.xml' is the source of word valences
+- Can try swapping out analyzer for NLTK module
+    #### Limitations:
+    - A B C
 
 
 
