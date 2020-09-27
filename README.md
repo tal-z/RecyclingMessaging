@@ -9,7 +9,7 @@ To Do:
 - Create Twitter app
 - Scrape tweets
 - Textblob or VADER
-- Assess negative words for trash-related content, and remove it.
+- Assess words for trash-related content, and remove it.
 
 
 
