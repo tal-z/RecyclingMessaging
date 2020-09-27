@@ -4,12 +4,11 @@ This repo is a learning environment focused on sentiment analysis of recycling m
 
 ## Project 1: Sentiment analysis of tweets from @NYCzerowaste and  @NYCSanitation
 1. Positive words vs. Negative words
-
-To Do:
-- Create Twitter app
-- Scrape tweets
-- Textblob or VADER
-- Assess words for trash-related content, and remove it.
+    - Create Twitter app
+    - Access tweets with Tweepy
+    - Regex to clean tweets prior to sentiment analysis
+    - Use textblob to classify tweets by sentiment
+        - Assess words for trash-related content, and remove it.
 
 
 
