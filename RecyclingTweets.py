@@ -1,16 +1,24 @@
 import tweepy
 import re
-from textblob.sentiments import NaiveBayesAnalyzer
+# from textblob.sentiments import NaiveBayesAnalyzer
 from textblob import TextBlob
+import pandas as pd
+from matplotlib import pyplot as plt
+from datetime import datetime
+import matplotlib.dates as mdates
 
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+
+# Enter twitter app authentication info
 consumer_key = 'u1h94WxNaGCfQG21aU1rlRzTx'
 consumer_secret = 'aX5IRBORH4xdWS3I2JthnBRr7JjGPuV6yIhWF5PjdmXTWkVynk'
 access_token = '1309924410363703296-5o4y0i4kYKNwk9XoqRYERDt4vRWU0s'
 access_token_secret = 'FucMOTNVF4aU02E5ppqzLUKDjn1ONgN3xgBOrxEUo6oWL'
 
+
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
-
 api = tweepy.API(auth)
 
 
@@ -26,20 +34,79 @@ def get_tweet_sentiment(tweet):
     # create TextBlob object of passed tweet text
     analysis = TextBlob(clean_tweet(tweet))
     # set sentiment
-    if analysis.sentiment.polarity > 0:
+    if analysis.sentiment.polarity >= 0.25:
         return 'positive'
-    elif analysis.sentiment.polarity == 0:
+    elif -0.25 < analysis.sentiment.polarity < 0.25:
         return 'neutral'
     else:
         return 'negative'
 
 
 # Grab Tweets.
-# max of 200 per page. Max of 5 pages.
-NYCZeroWaste_tweets = api.user_timeline('NYCzerowaste', count=200, page=2, include_rts=False)
-NYCSanitation_tweets = api.user_timeline('NYCSanitation', count=200, page=2, include_rts=False)
+# max of 200 per page. Max of 5 pages while include_rts=False (retweets)
+NYCZeroWaste_tweets = api.user_timeline('NYCzerowaste', count=200, page=1, include_rts=True)
+NYCSanitation_tweets = api.user_timeline('NYCSanitation', count=200, page=1, include_rts=True)
+DsnyColumbia_tweets = api.user_timeline('DsnyColumbia', count=200, page=1, include_rts=True)
+
+# For each tweet object:
+#   parse for desired info,
+#   classify the sentiment of tweet's text,
+#   and store the results to a dictionary.
+#   Then, add the dictionary to a list
+parsed_tweets = []
+for tweet in NYCZeroWaste_tweets:
+    d = {}
+    d['source'] = '@NYCZeroWaste'
+    d['id'] = tweet.id
+    d['created_at'] = tweet.created_at
+    d['date'] = datetime.date(d['created_at'])
+    d['text'] = tweet.text
+    d['sentiment'] = get_tweet_sentiment(clean_tweet(tweet.text))
+    parsed_tweets.append(d)
+
+for tweet in NYCSanitation_tweets:
+    d = {}
+    d['source'] = '@NYCSanitation'
+    d['id'] = tweet.id
+    d['created_at'] = tweet.created_at
+    d['date'] = datetime.date(d['created_at'])
+    d['text'] = tweet.text
+    d['sentiment'] = get_tweet_sentiment(clean_tweet(tweet.text))
+    parsed_tweets.append(d)
+
+for tweet in DsnyColumbia_tweets:
+    d = {}
+    d['source'] = '@DsnyColumbia'
+    d['id'] = tweet.id
+    d['created_at'] = tweet.created_at
+    d['date'] = datetime.date(d['created_at'])
+    d['text'] = tweet.text
+    d['sentiment'] = get_tweet_sentiment(clean_tweet(tweet.text))
+    parsed_tweets.append(d)
 
 
+# Throw the list of tweet dictionaries into a dataframe
+tweets_df = pd.DataFrame(parsed_tweets).set_index(keys=['date']).sort_index()
+
+
+
+tweets_per_date = tweets_df.groupby(['date', 'source', 'sentiment']).count()
+
+
+print(tweets_df)
+print(tweets_per_date)
+
+
+### Plot the number of tweets per date from all three twitter accounts. Includes responses to comments.
+fig, ax = plt.subplots()
+fig.autofmt_xdate(rotation=40)
+ax.fmt_xdata = mdates.DateFormatter('%Y-%m-%d')
+ax.tick_params(axis='both', which='major', labelsize=5)
+plt.bar([tup[0] for tup in tweets_per_date.index], tweets_per_date['id'])
+
+plt.show()
+
+"""
 ZW_tweets = []
 for tweet in NYCZeroWaste_tweets:
     parsed_tweet = {}
@@ -97,3 +164,4 @@ print(f"Positive tweets percentage: {(100 * (len(SAN_ptweets) / len(SAN_tweets))
 print(f"Negative tweets percentage: {(100 * (len(SAN_ntweets) / len(SAN_tweets)))}%")
 print(f"Neutral tweets percentage: {(100 * (len(SAN_tweets) - (len(SAN_ntweets) + len(SAN_ptweets))) / len(SAN_tweets))}%")
 
+"""
