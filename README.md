@@ -2,16 +2,17 @@
 
 This repo is a learning environment focused on sentiment analysis of recycling messaging text.
 
-## Project 1: Sentiment analysis of tweets from @NYCzerowaste and  @NYCSanitation
+## Project 1: Sentiment analysis of tweets from @NYCzerowaste and  @NYCSanitation and @DsnyColumbia. Add more accounts?
 1. Positive words vs. Negative words
     - Create Twitter app
     - Access tweets with Tweepy
-        - write loop to pull up to 3200 tweets
+        - possible improvement: write loop to pull up to 3200 tweets
     - Parse twees for desired points of analysis
     - Regex to clean tweets prior to sentiment analysis
     - Use textblob to classify tweets by sentiment
-        - Assess words for trash-related content, and remove it.
+        - ~~possible improvement: Assess words for trash-related content, and remove it.~~
 2. Sentiments by date.
+    - script currently puts tweets into a dataframe and stores their sentiment in a new column.
 3. Recycling rates by date.
 4. Compare.
 5. Add in Wikipedia data??
