@@ -1,6 +1,6 @@
 import tweepy
 import re
-# from textblob.sentiments import NaiveBayesAnalyzer
+from textblob.sentiments import NaiveBayesAnalyzer
 from textblob import TextBlob
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -43,10 +43,22 @@ def get_tweet_sentiment(tweet):
 
 
 # Grab Tweets.
-# max of 200 per page. Max of 5 pages while include_rts=False (retweets)
-NYCZeroWaste_tweets = api.user_timeline('NYCzerowaste', count=200, page=1, include_rts=True)
-NYCSanitation_tweets = api.user_timeline('NYCSanitation', count=200, page=1, include_rts=True)
-DsnyColumbia_tweets = api.user_timeline('DsnyColumbia', count=200, page=1, include_rts=True)
+# Max of 200 per page. Max of 5 pages while include_rts=False (retweets)
+# These API calls could be placed into a loop where page is an increasing variable (offset) until 16 is reached.
+# Or, until <200 tweets are returned.
+page_num = 1
+NYCZeroWaste_tweets = []
+NYCSanitation_tweets = []
+DsnyColumbia_tweets = []
+while page_num < 16:
+    ZW_page = api.user_timeline('NYCzerowaste', count=200, page=page_num, include_rts=True)
+    NYCZeroWaste_tweets.append(ZW_page)
+    SAN_page = api.user_timeline('NYCSanitation', count=200, page=page_num, include_rts=True)
+    NYCSanitation_tweets.append(SAN_page)
+    DC_page = api.user_timeline('DsnyColumbia', count=200, page=page_num, include_rts=True)
+    DsnyColumbia_tweets.append(DC_page)
+    page_num += 1
+
 
 # For each tweet object:
 #   parse for desired info,
@@ -54,41 +66,42 @@ DsnyColumbia_tweets = api.user_timeline('DsnyColumbia', count=200, page=1, inclu
 #   and store the results to a dictionary.
 #   Then, add the dictionary to a list
 parsed_tweets = []
-for tweet in NYCZeroWaste_tweets:
-    d = {}
-    d['source'] = '@NYCZeroWaste'
-    d['id'] = tweet.id
-    d['created_at'] = tweet.created_at
-    d['date'] = datetime.date(d['created_at'])
-    d['text'] = tweet.text
-    d['sentiment'] = get_tweet_sentiment(clean_tweet(tweet.text))
-    parsed_tweets.append(d)
+for page in NYCZeroWaste_tweets:
+    for tweet in page:
+        d = {}
+        d['source'] = '@NYCZeroWaste'
+        d['id'] = tweet.id
+        d['created_at'] = tweet.created_at
+        d['date'] = datetime.date(d['created_at'])
+        d['text'] = tweet.text
+        d['sentiment'] = get_tweet_sentiment(clean_tweet(tweet.text))
+        parsed_tweets.append(d)
 
-for tweet in NYCSanitation_tweets:
-    d = {}
-    d['source'] = '@NYCSanitation'
-    d['id'] = tweet.id
-    d['created_at'] = tweet.created_at
-    d['date'] = datetime.date(d['created_at'])
-    d['text'] = tweet.text
-    d['sentiment'] = get_tweet_sentiment(clean_tweet(tweet.text))
-    parsed_tweets.append(d)
+for page in NYCSanitation_tweets:
+    for tweet in page:
+        d = {}
+        d['source'] = '@NYCSanitation'
+        d['id'] = tweet.id
+        d['created_at'] = tweet.created_at
+        d['date'] = datetime.date(d['created_at'])
+        d['text'] = tweet.text
+        d['sentiment'] = get_tweet_sentiment(clean_tweet(tweet.text))
+        parsed_tweets.append(d)
 
-for tweet in DsnyColumbia_tweets:
-    d = {}
-    d['source'] = '@DsnyColumbia'
-    d['id'] = tweet.id
-    d['created_at'] = tweet.created_at
-    d['date'] = datetime.date(d['created_at'])
-    d['text'] = tweet.text
-    d['sentiment'] = get_tweet_sentiment(clean_tweet(tweet.text))
-    parsed_tweets.append(d)
-
+for page in DsnyColumbia_tweets:
+    for tweet in page:
+        d = {}
+        d['source'] = '@DsnyColumbia'
+        d['id'] = tweet.id
+        d['created_at'] = tweet.created_at
+        d['date'] = datetime.date(d['created_at'])
+        d['text'] = tweet.text
+        d['sentiment'] = get_tweet_sentiment(clean_tweet(tweet.text))
+        parsed_tweets.append(d)
+    
 
 # Throw the list of tweet dictionaries into a dataframe
 tweets_df = pd.DataFrame(parsed_tweets).set_index(keys=['date']).sort_index()
-
-
 
 tweets_per_date = tweets_df.groupby(['date', 'source', 'sentiment']).count()
 
