@@ -5,7 +5,7 @@ This repo is a learning environment focused on sentiment analysis of recycling m
 ## Project 1: Sentiment analysis of tweets from @NYCzerowaste and  @NYCSanitation and @DsnyColumbia. 
 1. Add more accounts?
 2. Positive words vs. Negative words
-    - Create Twitter app  -`[x]
+    - Create Twitter app  - [x]
     - Access tweets with Tweepy
         - possible improvement: write loop to pull up to 3200 tweets
     - Parse twees for desired points of analysis
