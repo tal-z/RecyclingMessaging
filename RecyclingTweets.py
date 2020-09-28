@@ -11,10 +11,10 @@ pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
 
 # Enter twitter app authentication info
-consumer_key = 'u1h94WxNaGCfQG21aU1rlRzTx'
-consumer_secret = 'aX5IRBORH4xdWS3I2JthnBRr7JjGPuV6yIhWF5PjdmXTWkVynk'
-access_token = '1309924410363703296-5o4y0i4kYKNwk9XoqRYERDt4vRWU0s'
-access_token_secret = 'FucMOTNVF4aU02E5ppqzLUKDjn1ONgN3xgBOrxEUo6oWL'
+consumer_key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+consumer_secret = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+access_token = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+access_token_secret = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
 
 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
