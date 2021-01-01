@@ -1,6 +1,6 @@
 # RecyclingMessaging
 
-This repo is a learning environment focused on sentiment analysis of recycling messaging text.
+This repo was a basic learning environment I used to practice sentiment analysis, with a focus on recycling messaging text. It is not being improved or developed any further, but remains here for personal reference.  
 
 ## Project 1: Sentiment analysis of tweets from @NYCzerowaste and  @NYCSanitation and @DsnyColumbia. 
 1. Add more accounts?
